@@ -1,10 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-recipes',
   templateUrl: './recipes.component.html',
   styleUrl: './recipes.component.css'
 })
-export class RecipesComponent {
+export class RecipesComponent implements OnInit{
+  recipes = [];
 
+  constructor(){};
+  
+  ngOnInit(): void {
+    //throw new Error('Method not implemented.');
+  }
 }
