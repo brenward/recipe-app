@@ -11,6 +11,10 @@ export class ShoppingListComponent implements OnInit{
     new Ingredient("pasta",250),
     new Ingredient("tomatoes",4)
   ];
+
+  onIngredientAdded(ingredient:Ingredient){
+    this.ingredients.push(ingredient);
+  }
     
   ngOnInit(): void {
     //throw new Error('Method not implemented.');
