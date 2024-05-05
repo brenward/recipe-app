@@ -2,10 +2,11 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, OnInit } from "@angular/core";
 import { Recipe } from "../recipes/recipe.model";
 import { RecipeService } from "../recipes/recipe.service";
+import { map } from "rxjs/operators";
 
 @Injectable({providedIn:'root'})
 export class DataStorageService implements OnInit{
-    private url:string = '';
+    private url:string = 'https://ng-recipe-book-de139.firebaseio.com/recipes.json';
 
     constructor(private http:HttpClient, private recipeService:RecipeService){}
     
@@ -21,8 +22,15 @@ export class DataStorageService implements OnInit{
     }
 
     fetchRecipes(){
-        this.http.get<Recipe[]>(this.url).subscribe(response => {
-            this.recipeService.setRecipes(response);
+        this.http.get<Recipe[]>(this.url)
+        .pipe(map(recipes =>{
+            recipes.map(recipe => {
+                return {...recipe, ingredients: recipe.ingredients?recipe.ingredients:[]}
+            })
+            return recipes;
+        }))
+        .subscribe(recipes => {
+            this.recipeService.setRecipes(recipes);
         });
     }
 
