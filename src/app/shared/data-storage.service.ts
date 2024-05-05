@@ -6,7 +6,7 @@ import { map, tap } from "rxjs/operators";
 
 @Injectable({providedIn:'root'})
 export class DataStorageService implements OnInit{
-    private url:string = 'https://ng-recipe-book-de139.firebaseio.com/recipes.json';
+    private url:string = '';
 
     constructor(private http:HttpClient, private recipeService:RecipeService){}
     
