@@ -1,14 +1,15 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable, OnInit } from "@angular/core";
 import { Recipe } from "../recipes/recipe.model";
 import { RecipeService } from "../recipes/recipe.service";
-import { map, tap } from "rxjs/operators";
+import { exhaustMap, map, take, tap } from "rxjs/operators";
+import { AuthService } from "../auth/auth.service";
 
 @Injectable({providedIn:'root'})
 export class DataStorageService implements OnInit{
     private url:string = '';
 
-    constructor(private http:HttpClient, private recipeService:RecipeService){}
+    constructor(private http:HttpClient, private recipeService:RecipeService, private authService:AuthService){}
     
     ngOnInit(): void {
         
@@ -22,13 +23,18 @@ export class DataStorageService implements OnInit{
     }
 
     fetchRecipes(){
-        return this.http.get<Recipe[]>(this.url)
-        .pipe(map(recipes =>{
+        return this.authService.user.pipe(take(1), exhaustMap(user => {
+            return this.http.get<Recipe[]>(this.url, {
+                params: new HttpParams().set('auth', user.token)
+            })
+        }), 
+        map(recipes =>{
             recipes.map(recipe => {
                 return {...recipe, ingredients: recipe.ingredients?recipe.ingredients:[]}
             })
             return recipes;
-        }), tap(recipes =>{
+        }), 
+        tap(recipes =>{
             this.recipeService.setRecipes(recipes);
         }));
     }
